@@ -1,6 +1,6 @@
 "use client";
-import { createChart, LineSeries } from "lightweight-charts";
 import { useEffect, useRef } from "react";
+import { createChart, LineSeries } from "lightweight-charts";
 
 export default function GMEChart() {
   const chartRef = useRef<HTMLDivElement>(null);
@@ -8,7 +8,9 @@ export default function GMEChart() {
   useEffect(() => {
     async function load() {
       const res = await fetch("http://localhost:4000/api/gme");
-      const data = await res.json(); // { time: '2024-06-01', value: 123.45 }
+      console.log('res', res)
+      const data = await res.json();
+      console.log('data', data)
 
       const chart = createChart(chartRef.current!, {
         width: 600,
@@ -16,9 +18,10 @@ export default function GMEChart() {
       });
 
       const series = chart.addSeries(LineSeries, {
-        color: "#FF0000", // Red color for GME
+        color: "#FF6347",
         lineWidth: 2,
       });
+
       series.setData(data);
 
       return () => chart.remove();
