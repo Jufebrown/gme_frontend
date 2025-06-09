@@ -1,7 +1,7 @@
 // pages/index.tsx
 import { useEffect, useState } from "react";
 import { fetchAlphaVantage } from "@/utils/fetchAlphaVantage";
-import { createChart, LineSeries } from "lightweight-charts";
+import { CandlestickSeries, createChart } from "lightweight-charts";
 
 type DataPoint = { time: string; value: number };
 
@@ -47,16 +47,19 @@ export default function Home() {
     const chart = createChart(document.getElementById("chart")!, {
       width: 800,
       height: 400,
+      layout: { textColor: 'white', background: { color: '#474747'}},
     });
+    console.log('data', data)
+    const candleStickSeries = chart.addSeries(CandlestickSeries, { upColor: '#26a69a', downColor: '#ef5350', borderVisible: false, wickUpColor: '#26a69a', wickDownColor: '#ef5350' })
 
-    chart.addSeries(LineSeries).setData(data);
+    candleStickSeries.setData(data);
 
     return () => chart.remove();
   }, [data]);
 
   return (
     <main>
-      <h1>GME Chart</h1>
+      <h1>GME</h1>
       <div id="chart" />
     </main>
   );

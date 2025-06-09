@@ -13,13 +13,12 @@ export async function fetchAlphaVantage(symbol = "GME") {
   }
 
   return Object.entries(raw)
-  .slice(0, 100) // get last 100 days
   .map(([date, entry]: [string, any]) => ({
     time: date,
     open: parseFloat(entry["1. open"]),
     high: parseFloat(entry["2. high"]),
     low: parseFloat(entry["3. low"]),
-    value: parseFloat(entry["4. close"]), // keep for charting
+    close: parseFloat(entry["4. close"]), // keep for charting
     volume: parseInt(entry["6. volume"], 10),
   }))
   .reverse();
