@@ -6,15 +6,22 @@ export async function fetchAlphaVantage(symbol = "GME") {
   const res = await fetch(url);
   const data = await res.json();
 
-  if (!data["Time Series (Daily)"]) {
+  const raw = data["Time Series (Daily)"];
+  if (!raw) {
     console.error("Alpha Vantage error:", data);
     return [];
   }
 
-  return Object.entries(data["Time Series (Daily)"])
-    .map(([date, day]: [string, any]) => ({
-      time: date,
-      value: parseFloat(day["4. close"]),
-    }))
-    .reverse();
+  return Object.entries(raw)
+  .slice(0, 100) // get last 100 days
+  .map(([date, entry]: [string, any]) => ({
+    time: date,
+    open: parseFloat(entry["1. open"]),
+    high: parseFloat(entry["2. high"]),
+    low: parseFloat(entry["3. low"]),
+    value: parseFloat(entry["4. close"]), // keep for charting
+    volume: parseInt(entry["6. volume"], 10),
+  }))
+  .reverse();
+  
 }

@@ -14,12 +14,21 @@ export default function Home() {
         const res = await fetch("http://localhost:4000/api/gme");
         const backendData: DataPoint[] = await res.json();
 
-        const isStale = backendData.length === 0 || new Date(backendData[0].time) < getMostRecentTradingDate();
+        const isStale =
+          backendData.length === 0 ||
+          new Date(backendData[0].time) < getMostRecentTradingDate();
 
         if (isStale) {
           console.log("Falling back to Alpha Vantage...");
           const fresh = await fetchAlphaVantage();
           setData(fresh);
+
+          // Save to backend
+          await fetch("http://localhost:4000/api/gme", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ quotes: fresh }),
+          });
         } else {
           setData(backendData);
         }
@@ -27,6 +36,7 @@ export default function Home() {
         console.error("Error loading data", err);
       }
     }
+
 
     loadData();
   }, []);
